@@ -112,27 +112,43 @@ def andrews_films_and_leads
   # List the film title and the leading actor for all of the films 'Julie
   # Andrews' played in.
   execute(<<-SQL)
+
     SELECT
-      movies.title, actors.name
+      m.title, a2.name
     FROM
-      movies
+      movies AS m
     JOIN
-      castings ON movies.id = castings.movie_id
+      castings AS c1 ON (m.id = c1.movie_id)
     JOIN
-      actors ON castings.actor_id = actors.id
-    WHERE movies.id IN (
-                        SELECT DISTINCT
-                          movies.id
-                        FROM
-                          movies
-                        JOIN
-                          castings ON movies.id = castings.movie_id
-                        JOIN
-                          actors ON castings.actor_id = actors.id
-                        WHERE
-                          actors.name = 'Julie Andrews'
-                        )
-          AND castings.ord = 1
+      actors AS a1 ON (a1.id = c1.actor_id)
+    JOIN
+      castings AS c2 ON (c1.movie_id = c2.movie_id)
+    JOIN
+      actors AS a2 ON (a2.id = c2.actor_id)
+    WHERE
+      a1.name = 'Julie Andrews' AND c2.ord = 1
+
+    -- SELECT
+    --   movies.title, actors.name
+    -- FROM
+    --   movies
+    -- JOIN
+    --   castings ON movies.id = castings.movie_id
+    -- JOIN
+    --   actors ON castings.actor_id = actors.id
+    -- WHERE movies.id IN (
+    --   SELECT DISTINCT
+    --     movies.id
+    --   FROM
+    --     movies
+    --   JOIN
+    --     castings ON movies.id = castings.movie_id
+    --   JOIN
+    --     actors ON castings.actor_id = actors.id
+    --   WHERE
+    --     actors.name = 'Julie Andrews'
+    -- )
+    -- AND castings.ord = 1
   SQL
 end
 
@@ -183,26 +199,41 @@ end
 def colleagues_of_garfunkel
   # List all the people who have played alongside 'Art Garfunkel'.
   execute(<<-SQL)
+
   SELECT
-    actors.name
+    a2.name
   FROM
-    movies
+    movies AS m
   JOIN
-    castings ON movies.id = castings.movie_id
+    castings AS c1 ON (c1.movie_id = m.id)
   JOIN
-    actors ON castings.actor_id = actors.id
-  WHERE movies.id IN (
-                      SELECT DISTINCT
-                        movies.id
-                      FROM
-                        movies
-                      JOIN
-                        castings ON movies.id = castings.movie_id
-                      JOIN
-                        actors ON castings.actor_id = actors.id
-                      WHERE
-                        actors.name = 'Art Garfunkel'
-                      )
-        AND actors.name NOT LIKE 'Art Garfunkel'
+    actors AS a1 ON (c1.actor_id = a1.id)
+  JOIN
+    castings AS c2 ON (c2.movie_id = m.id)
+  JOIN
+    actors AS a2 ON (c2.actor_id = a2.id)
+  WHERE
+    a1.id != a2.id AND a1.name = 'Art Garfunkel'
+  -- SELECT
+  --   actors.name
+  -- FROM
+  --   movies
+  -- JOIN
+  --   castings ON movies.id = castings.movie_id
+  -- JOIN
+  --   actors ON castings.actor_id = actors.id
+  -- WHERE movies.id IN (
+  --                     SELECT DISTINCT
+  --                       movies.id
+  --                     FROM
+  --                       movies
+  --                     JOIN
+  --                       castings ON movies.id = castings.movie_id
+  --                     JOIN
+  --                       actors ON castings.actor_id = actors.id
+  --                     WHERE
+  --                       actors.name = 'Art Garfunkel'
+  --                     )
+  --       AND actors.name NOT LIKE 'Art Garfunkel'
   SQL
 end

@@ -121,11 +121,13 @@ def teachers_and_divisions
   # the the teacher is in dept 1 or 2 and 'Art' otherwise.
   execute(<<-SQL)
     SELECT teachers.name, (
-                          CASE
-                          WHEN depts.id = 1 OR depts.id = 2 THEN 'Sci'
-                          ELSE 'Art'
-                          END
-                          )
+      CASE
+      WHEN
+        depts.id = 1 OR depts.id = 2 THEN 'Sci'
+      ELSE
+        'Art'
+      END
+    )
 
     FROM
       teachers
@@ -142,12 +144,12 @@ def teachers_and_divisions_two
   # 'None' otherwise.
   execute(<<-SQL)
     SELECT teachers.name, (
-                          CASE
-                          WHEN depts.id = 1 OR depts.id = 2 THEN 'Sci'
-                          WHEN depts.id = 3 THEN 'Art'
-                          ELSE 'None'
-                          END
-                          )
+      CASE
+      WHEN depts.id = 1 OR depts.id = 2 THEN 'Sci'
+      WHEN depts.id = 3 THEN 'Art'
+      ELSE 'None'
+      END
+    )
 
     FROM
       teachers
